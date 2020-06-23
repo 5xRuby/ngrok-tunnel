@@ -10,7 +10,7 @@ module Ngrok
   class Tunnel
 
     class << self
-      attr_reader :pid, :ngrok_url, :ngrok_url_https, :status
+      attr_reader :pid, :ngrok_url, :ngrok_url_https, :status, :ngrok_url_http
 
       def init(params = {})
         # map old key 'port' to 'addr' to maintain backwards compatibility with versions 2.0.21 and earlier
@@ -97,8 +97,9 @@ module Ngrok
           result = log_content.scan(/URL:(.+)\sProto:(http|https)\s/)
           if !result.empty?
             result = Hash[*result.flatten].invert
-            @ngrok_url = result['http']
-            @ngrok_url_https = result['https']
+            @ngrok_url = @ngrok_url_https = result['https']
+            # @ngrok_url_https = result['https']
+            @ngrok_url_http = result['http']
             return @ngrok_url if @ngrok_url
             return @ngrok_url_https if @ngrok_url_https
           end
